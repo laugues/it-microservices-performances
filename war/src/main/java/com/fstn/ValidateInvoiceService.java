@@ -1,5 +1,8 @@
 package com.fstn;
 
+import com.fstn.predicate.InvoiceIdPredicate;
+import org.apache.commons.collections.CollectionUtils;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
@@ -9,6 +12,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,16 +76,21 @@ public class ValidateInvoiceService {
 
     @GET
     @Path("/get/{id}")
-    @Produces("application/json")
-    public Invoice get(@PathParam("id") String id) {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response get(@PathParam("id") final String id) {
         log.log(Level.SEVERE, String.format("Getting invoice with id %s ...", id));
 
-        Invoice invoice =
-                invoiceBuilderConfig.getInvoices().stream()
-                        .filter((p) -> p.getId().equals((id)))
-                        .findFirst().get();
+
+        Collection filtered = CollectionUtils.select(invoiceBuilderConfig.getInvoices(), new InvoiceIdPredicate(id));
+        List<Invoice> invoicesFiltered = (List<Invoice>) filtered;
         log.log(Level.SEVERE, String.format("Getting invoice with id %s DONE.", id));
-        return invoice;
+        if (invoicesFiltered.size() > 0) {
+            return Response.ok(invoicesFiltered.get(0), MediaType.APPLICATION_JSON).build();
+        }
+
+
+        return Response.status(Response.Status.NOT_FOUND).entity("Entity not found for id: " + id).build();
+
     }
 
 
