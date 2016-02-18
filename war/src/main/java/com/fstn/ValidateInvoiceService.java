@@ -97,8 +97,8 @@ public class ValidateInvoiceService {
     @GET
     @Path("/html/get")
     @Produces("text/html")
-    @Consumes("application/json")
-    public InputStream getHtml(Context context) {
+    @Consumes("text/html")
+    public InputStream getHtml() {
 
         log.log(Level.SEVERE, "Getting html template ...");
 
