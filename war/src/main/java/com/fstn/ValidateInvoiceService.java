@@ -41,7 +41,11 @@ public class ValidateInvoiceService {
     @Produces("application/json")
     @Consumes("application/json")
     public Context validate(Context context) {
-        context.addCall(new StackCall(registrer.getApi().getName() + registrer.getApi().getAction()));
+        log.log(Level.INFO, String.format("Validating invoices ..."));
+        log.log(Level.INFO, "registrer.getApi().getName() = "+ registrer.getApi().getName());
+        log.log(Level.INFO, "registrer.getApi().getAction() ="+ registrer.getApi().getAction());
+
+        context.addCall(new StackCall(registrer.getApi().getName() + '/' + registrer.getApi().getAction()));
         for (Api api : registrer.getChildApis()) {
             Client client = ClientBuilder.newBuilder().build();
             context = client
@@ -50,6 +54,8 @@ public class ValidateInvoiceService {
                     .post(Entity.entity(context, MediaType.APPLICATION_JSON),
                             Context.class);
         }
+
+        log.log(Level.INFO, String.format("Validating invoices DONE."));
         return context;
     }
 
@@ -66,10 +72,10 @@ public class ValidateInvoiceService {
     @Produces("application/json")
     public List<Invoice> get() {
 
-        log.log(Level.SEVERE, String.format("Getting all invoices ..."));
+        log.log(Level.INFO, String.format("Getting all invoices ..."));
 
         List<Invoice> invoices = invoiceBuilderConfig.getInvoices();
-        log.log(Level.SEVERE, String.format("Getting all invoices [%d] DONE.", invoices.size()));
+        log.log(Level.INFO, String.format("Getting all invoices [%d] DONE.", invoices.size()));
 
         return invoices;
     }
@@ -83,7 +89,7 @@ public class ValidateInvoiceService {
 
         Collection filtered = CollectionUtils.select(invoiceBuilderConfig.getInvoices(), new InvoiceIdPredicate(id));
         List<Invoice> invoicesFiltered = (List<Invoice>) filtered;
-        log.log(Level.SEVERE, String.format("Getting invoice with id %s DONE.", id));
+        log.log(Level.INFO, String.format("Getting invoice with id %s DONE.", id));
         if (invoicesFiltered.size() > 0) {
             return Response.ok(invoicesFiltered.get(0), MediaType.APPLICATION_JSON).build();
         }
@@ -93,21 +99,5 @@ public class ValidateInvoiceService {
 
     }
 
-
-    @GET
-    @Path("/html/get")
-    @Produces("text/html")
-    @Consumes("text/html")
-    public InputStream getHtml() {
-
-        log.log(Level.SEVERE, "Getting html template ...");
-
-        InputStream inputStream = Thread.currentThread().getContextClassLoader()
-                .getResourceAsStream("html/commonTemplate.html");
-
-
-        log.log(Level.SEVERE, "Getting html template DONE.");
-        return inputStream;
-    }
 
 }

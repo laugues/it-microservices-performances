@@ -26,7 +26,7 @@ public class RegistrerConfig {
     private String wsName;
     private String wsAction;
     private String wsRegisterAction;
-    private String wsURL = "http://127.0.0.1:8080/";
+    private String wsURL = "http://localhost:8080/";
 
     private static final Logger log = Logger.getLogger(RegistrerConfig.class
             .getName());
