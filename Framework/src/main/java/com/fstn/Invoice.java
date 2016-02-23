@@ -106,14 +106,12 @@ public class Invoice implements Serializable {
      * The date.      *
      * date
      */
-    @XmlJavaTypeAdapter(DateAdapter.class)
     private Date date;
 
     /**
      * The date.      *
      * dueDate
      */
-    @XmlJavaTypeAdapter(DateAdapter.class)
     private Date dueDate;
 
     /**
